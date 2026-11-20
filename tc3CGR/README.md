@@ -33,7 +33,7 @@ pip install PyOpenGL Pillow
 python tc3.py
 ```
 
-Execute de dentro desta pasta, pois `ceu.jpg` é carregado por caminho relativo. É necessário ter o GLUT (por exemplo, FreeGLUT) disponível no sistema.
+O `ceu.jpg` é procurado na pasta do `tc3.py`, então o programa pode ser executado de qualquer diretório. É necessário ter o GLUT (por exemplo, FreeGLUT) disponível no sistema.
 
 ## Autores
 

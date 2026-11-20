@@ -1,3 +1,4 @@
+import os
 import sys
 import random
 import math
@@ -213,6 +214,9 @@ def display():
 
 def reshape(w, h):
     global window_width, window_height
+    # Ao minimizar a janela o GLUT pode mandar 0x0; gluOrtho2D(0, w, 0, 0)
+    # gera erro de OpenGL (GL_INVALID_VALUE) e o PyOpenGL lança exceção
+    w, h = max(w, 1), max(h, 1)
     window_width = w
     window_height = h
     glViewport(0, 0, w, h)
@@ -240,7 +244,8 @@ def main():
 
     glClearColor(0.5, 0.7, 1.0, 1.0)
 
-    background_texture = load_texture("ceu.jpg")
+    # Caminho relativo à pasta do script (funciona rodando de qualquer diretório)
+    background_texture = load_texture(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ceu.jpg"))
     birds = [Bird() for _ in range(num_birds)]
 
     glutDisplayFunc(display)

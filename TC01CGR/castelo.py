@@ -66,8 +66,13 @@ def create_castle_final():
         muralha_f_dir = pv.Box(bounds=(2, 10,
                                        -10 - largura_muralha/2, -10 + largura_muralha/2,
                                        0, altura_muralha))
+        # trecho da muralha acima do portão (a abertura vai só até z = 4)
+        muralha_f_topo = pv.Box(bounds=(-2, 2,
+                                        -10 - largura_muralha/2, -10 + largura_muralha/2,
+                                        4, altura_muralha))
         plotter.add_mesh(muralha_f_esq, color=cor_castelo)
         plotter.add_mesh(muralha_f_dir, color=cor_castelo)
+        plotter.add_mesh(muralha_f_topo, color=cor_castelo)
 
     # muralhas laterais e traseira
     muralha_e = pv.Box(bounds=(-10 - largura_muralha/2, -10 + largura_muralha/2, -10, 10, 0, altura_muralha))

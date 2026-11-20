@@ -9,7 +9,7 @@ Três cenas 3D montadas a partir de primitivas geométricas (esferas, cilindros,
 ## Funcionalidades
 
 - **Boneco de neve** (`boneco_neve.py`): três esferas empilhadas, olhos, nariz de cenoura em cone, chapéu com dois cilindros e braços.
-- **Castelo** (`castelo.py`): piso, quatro torres com telhado cônico, muralhas e janelas. A abertura do portão na muralha frontal é feita por diferença booleana entre malhas; se a operação falhar, a muralha é montada com duas caixas.
+- **Castelo** (`castelo.py`): piso, quatro torres com telhado cônico, muralhas e janelas. A abertura do portão na muralha frontal é feita por diferença booleana entre malhas; se a operação falhar, a muralha é montada com três caixas (as duas laterais do portão e o trecho acima dele).
 - **Robô** (`robo.py`): tronco em cubo, cabeça esférica, braços e pernas em cilindros, juntas em esferas e espinhos nos ombros. Usa uma função auxiliar que cria um cilindro entre dois pontos.
 
 ## Tecnologias

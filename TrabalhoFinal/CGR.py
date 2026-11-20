@@ -114,10 +114,34 @@ def collide_spheres(a, b):
 # ============================================================
 # OPENGL
 # ============================================================
+def setup_projection(display):
+    # A perspectiva vai na matriz de PROJEÇÃO; a câmera (translação) vai na
+    # MODELVIEW. Antes as duas iam juntas na MODELVIEW, o que distorce a
+    # iluminação (as normais eram transformadas também pela perspectiva).
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    gluPerspective(45, display[0] / display[1], 0.1, 100.0)
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
+
+
+def open_camera(indices=(0, 1, 2)):
+    """Abre a primeira webcam que entregar imagem; devolve None se não houver."""
+    for i in indices:
+        cap = cv2.VideoCapture(i)
+        if cap.isOpened() and cap.read()[0]:
+            print(f"Usando a câmera {i}.")
+            return cap
+        cap.release()
+    print("Nenhuma webcam encontrada: a cena roda, mas a esfera azul fica parada.")
+    return None
+
+
 def init_opengl():
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_LIGHTING)
     glEnable(GL_LIGHT0)
+    glEnable(GL_NORMALIZE)
     glLightfv(GL_LIGHT0, GL_POSITION, (1, 1, 1, 0))
     glEnable(GL_COLOR_MATERIAL)
     glClearColor(0, 0, 0, 1)
@@ -131,15 +155,16 @@ def main():
     display = (900, 700)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
 
-    gluPerspective(45, display[0] / display[1], 0.1, 100.0)
-    glTranslatef(0, 0, -15)
+    pygame.display.set_caption("Trabalho Final CGR - Esferas controladas pelo rosto")
+    setup_projection(display)
 
+    # Luz direcional definida com a MODELVIEW identidade (espaço da câmera)
     init_opengl()
 
     # MediaPipe
     mp_face = mp.solutions.face_detection
     detector = mp_face.FaceDetection(model_selection=0, min_detection_confidence=0.6)
-    cap = cv2.VideoCapture(0)
+    cap = open_camera()
 
     # Cabeça controlada pela webcam
     head = PhysicsObject([0, 0, 0], radius=1.3)
@@ -158,22 +183,25 @@ def main():
         dt = clock.tick(60) / 1000.0
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                cap.release()
+            if event.type == pygame.QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+                if cap is not None:
+                    cap.release()
+                detector.close()
                 pygame.quit()
                 return
 
         # ---- Webcam ----
-        ret, frame = cap.read()
-        if not ret:
-            continue
+        # Se a câmera falhar, a simulação continua (antes o "continue" pulava
+        # também a física, o desenho e o tratamento de eventos e a janela travava)
+        res = None
+        if cap is not None:
+            ret, frame = cap.read()
+            if ret:
+                frame = cv2.flip(frame, 1)
+                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                res = detector.process(rgb)
 
-        frame = cv2.flip(frame, 1)
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-        res = detector.process(rgb)
-
-        if res.detections:
+        if res is not None and res.detections:
             d = res.detections[0]
             box = d.location_data.relative_bounding_box
 
@@ -204,7 +232,6 @@ def main():
         # ---- Render ----
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
-        gluPerspective(45, display[0] / display[1], 0.1, 100)
         glTranslatef(0, 0, -15)
 
         # Esfera da cabeça
@@ -225,4 +252,5 @@ def main():
         pygame.display.flip()
 
 
-main()
+if __name__ == "__main__":
+    main()

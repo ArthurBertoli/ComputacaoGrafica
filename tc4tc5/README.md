@@ -8,9 +8,11 @@ Programa que lê um modelo 3D no formato Wavefront OBJ (exportado do Blender), a
 
 ## Funcionalidades
 
-- Leitor de OBJ próprio: lê vértices (`v`), coordenadas de textura (`vt`) e faces (`f`).
+- Leitor de OBJ próprio: lê vértices (`v`), coordenadas de textura (`vt`) e faces (`f`), aceitando índices negativos.
+- Faces com 4 ou mais vértices (como as que o Blender exporta) são trianguladas em leque ao carregar, então o modelo é desenhado corretamente com `GL_TRIANGLES` sem precisar reexportar.
+- O modelo é centralizado e redimensionado automaticamente para caber na tela.
 - Carregamento da textura `unodelado.png` com Pygame e envio ao OpenGL.
-- Renderização do modelo `unoTest.obj` com textura, em perspectiva, girando a cada quadro (30 FPS).
+- Renderização do modelo `unoTest.obj` com textura, em perspectiva e com teste de profundidade, girando a cada quadro (30 FPS).
 
 ## Tecnologias
 
@@ -32,11 +34,7 @@ pip install pygame PyOpenGL
 python main.py
 ```
 
-Execute de dentro desta pasta, pois os arquivos são carregados por caminho relativo.
-
-## Observações
-
-- O leitor desenha as faces com `GL_TRIANGLES`, mas os modelos foram exportados com faces de quatro vértices; para uma exibição correta, exporte o modelo triangulado no Blender.
+Os arquivos do modelo e da textura são procurados na pasta do `main.py`, então o programa pode ser executado de qualquer diretório. Para sair, feche a janela ou pressione `Esc`.
 
 ## Autores
 

@@ -64,6 +64,8 @@ def timer(value):
     glutTimerFunc(16, timer, 0)
 
 def reshape(w, h):
+    # Ao minimizar a janela o GLUT pode mandar altura 0 (divisão por zero abaixo)
+    h = max(h, 1)
     glViewport(0, 0, w, h)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
